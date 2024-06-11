@@ -7,7 +7,7 @@ const signup = async (req,res,next) =>{
         const newUser = new User({name,email,password,role})
 
         await newUser.save();
-        res.status(201).json({message:"User registered successfully"})
+        res.status(201).json({code :201,status:true, message:"User registered successfully"})
     } catch (error) {
         next(error)
     }
