@@ -8,6 +8,6 @@ const userSchema = mongoose.Schema({
     role : {type :Number , default : 3}
 },{timestamps:true})
 
-const User = mongoose.Schema("User",userSchema)
+const User = mongoose.model("User",userSchema)
 
 module.exports = User;
