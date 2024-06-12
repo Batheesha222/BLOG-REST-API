@@ -5,6 +5,8 @@ dotenv.config();
 const connectMongodb = require("./init/mongodb");
 const { authRoute } = require("./routes");
 const morgan = require("morgan");
+const {errorHandler} = require("./middleware");
+
 //init app
 const app = express();
 
@@ -18,5 +20,11 @@ app.use(morgan("dev"));
 
 //routes
 app.use("/api/v1/auth", authRoute);
+
+//errorHandlers middleware
+app.use(errorHandler);
+
+//not found route
+
 
 module.exports = app;
