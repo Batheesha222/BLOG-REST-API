@@ -1,6 +1,7 @@
 const { User } = require("../models");
 const hashPassword = require("../utils/hashPassword");
 const comparePassword = require("../utils/comparePassword");
+const generateToken = require("../utils/generateToken");
 
 const signup = async (req, res, next) => {
   try {
@@ -17,13 +18,11 @@ const signup = async (req, res, next) => {
     const newUser = new User({ name, email, password: hashedPassword, role });
 
     await newUser.save();
-    res
-      .status(201)
-      .json({
-        code: 201,
-        status: true,
-        message: "User registered successfully",
-      });
+    res.status(201).json({
+      code: 201,
+      status: true,
+      message: "User registered successfully",
+    });
   } catch (error) {
     next(error);
   }
@@ -43,9 +42,16 @@ const signin = async (req, res, next) => {
       res.code = 401;
       throw new Error("Invalid Credentials");
     }
+
+    const token = generateToken(user);
     res
       .status(200)
-      .json({ code: 200, status: true, message: "User signin successfully" });
+      .json({
+        code: 200,
+        status: true,
+        message: "User signin successfully",
+        data: { token },
+      });
   } catch (error) {
     next(error);
   }
