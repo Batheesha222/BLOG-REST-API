@@ -59,10 +59,23 @@ const recoverPasswordValidator = [
     .withMessage("password is required"),
 ];
 
+const changePasswordValidator = [
+  check("oldPassword")
+    .notEmpty()
+    .withMessage("password is required"),
+
+  check("newPassword")
+    .notEmpty()
+    .withMessage("password is required"),
+];
+
+
+
 module.exports = {
   signupValidator,
   signinValidator,
   emailValidator,
   verifyUserValidator,
   recoverPasswordValidator,
+  changePasswordValidator
 };
