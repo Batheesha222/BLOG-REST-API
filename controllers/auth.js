@@ -121,4 +121,36 @@ const verifyUser = async (req, res, next) => {
   }
 };
 
-module.exports = { signup, signin, verifyCode, verifyUser };
+const forgotPasswordCode = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      res.code = 404;
+      throw new Error("user not found");
+    }
+    const code = generateCode(6);
+    user.forgotPassword = code;
+
+    await user.save();
+    await sendEmail({
+      emailTo: user.email,
+      subject: "Forgot Password code",
+      code,
+      content: "change your password",
+    });
+    res
+      .status(200)
+      .json({
+        code: 200,
+        status: true,
+        message: "forgot password code sent successfully",
+      });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { signup, signin, verifyCode, verifyUser, forgotPasswordCode };
