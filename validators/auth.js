@@ -22,9 +22,7 @@ const signinValidator = [
     .notEmpty()
     .withMessage("Email is required"),
 
-    check("password")
-    .notEmpty()
-    .withMessage("password is required"),
+  check("password").notEmpty().withMessage("password is required"),
 ];
 
 const emailValidator = [
@@ -35,4 +33,13 @@ const emailValidator = [
     .withMessage("Email is required"),
 ];
 
-module.exports = { signupValidator, signinValidator,emailValidator };
+const verifyUserValidator = [
+  check("email")
+    .isEmail()
+    .withMessage("invalid email")
+    .notEmpty()
+    .withMessage("Email is required"),
+
+  check("code").notEmpty().withMessage("Code is required"),
+];
+module.exports = { signupValidator, signinValidator, emailValidator ,verifyUserValidator};
