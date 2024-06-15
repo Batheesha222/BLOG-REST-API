@@ -141,13 +141,11 @@ const forgotPasswordCode = async (req, res, next) => {
       code,
       content: "change your password",
     });
-    res
-      .status(200)
-      .json({
-        code: 200,
-        status: true,
-        message: "forgot password code sent successfully",
-      });
+    res.status(200).json({
+      code: 200,
+      status: true,
+      message: "forgot password code sent successfully",
+    });
   } catch (error) {
     next(error);
   }
@@ -155,7 +153,7 @@ const forgotPasswordCode = async (req, res, next) => {
 
 const recoverPassword = async (req, res, next) => {
   try {
-    const { email, code , password } = req.body;
+    const { email, code, password } = req.body;
 
     const user = await User.findOne({ email });
 
@@ -163,35 +161,33 @@ const recoverPassword = async (req, res, next) => {
       res.code = 404;
       throw new Error("user not found");
     }
-    if(user.forgotPasswordCode !==code){
-      res.code=400;
-      throw new Error("Invalid code")
+    if (user.forgotPasswordCode !== code) {
+      res.code = 400;
+      throw new Error("Invalid code");
     }
-    
-    const hashedPassword = await hashPassword(password)
+
+    const hashedPassword = await hashPassword(password);
     user.password = hashedPassword;
     user.forgotPasswordCode = null;
 
     await user.save();
-    
-    res
-      .status(200)
-      .json({
-        code: 200,
-        status: true,
-        message: "password recovered successfully",
-      });
+
+    res.status(200).json({
+      code: 200,
+      status: true,
+      message: "password recovered successfully",
+    });
   } catch (error) {
     next(error);
   }
 };
 
-const changePassword = async(req,res,next)=>{
+const changePassword = async (req, res, next) => {
   try {
-    const {oldPassword,newPassword} = req.body;
+    const { oldPassword, newPassword } = req.body;
 
-    const {_id} = req.user;
-    const user = await User.findById(_id)
+    const { _id } = req.user;
+    const user = await User.findById(_id);
 
     if (!user) {
       res.code = 401;
@@ -203,11 +199,11 @@ const changePassword = async(req,res,next)=>{
       res.code = 400;
       throw new Error("Old password doesn't match");
     }
-    if (oldPassword===newPassword) {
+    if (oldPassword === newPassword) {
       res.code = 400;
       throw new Error("You are providing old password");
     }
-    const hashedPassword = await hashPassword(newPassword)
+    const hashedPassword = await hashPassword(newPassword);
     user.password = hashedPassword;
 
     await user.save();
@@ -218,12 +214,61 @@ const changePassword = async(req,res,next)=>{
       message: "password change successfully",
     });
 
-
-    res.json(req.user)
+    res.json(req.user);
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
+const updateProfile = async (req, res, next) => {
+  try {
+    const { name, email } = req.body;
 
-module.exports = { signup, signin, verifyCode, verifyUser, forgotPasswordCode, recoverPassword, changePassword };
+    const { _id } = req.user;
+    const user = await User.findById(_id).select("-password -verificationCode -forgotPasswordCode");
+
+    if (!user) {
+      res.code = 401;
+      throw new Error("user not found");
+    }
+    if(email) {
+      const isUserExist = await User.findOne({email})
+      if(isUserExist && isUserExist.email ===email && String(user._id) !==String(isUserExist._id)){
+        res.code =400;
+        throw new Error("Email already exist")
+      }
+        ;
+
+    }
+
+    user.name = name ? name : user.name;
+    user.email = email ? email : user.email;
+
+    if (email) {
+      user.isVerified = false;
+    }
+    await user.save();
+
+    res.status(200).json({
+      code: 200,
+      status: true,
+      message: "user profile update successfully",
+      data: { user },
+    });
+
+    res.json(req.user);
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = {
+  signup,
+  signin,
+  verifyCode,
+  verifyUser,
+  forgotPasswordCode,
+  recoverPassword,
+  changePassword,
+  updateProfile,
+};
