@@ -3,7 +3,7 @@ const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
 dotenv.config();
 const connectMongodb = require("./init/mongodb");
-const { authRoute } = require("./routes");
+const { authRoute, categoryRoute } = require("./routes");
 const morgan = require("morgan");
 const {errorHandler} = require("./middleware");
 const notfound = require("./controllers/notFound")
@@ -21,6 +21,7 @@ app.use(morgan("dev"));
 
 //routes
 app.use("/api/v1/auth", authRoute);
+app.use("/api/v1/category", categoryRoute)
 
 //not found route
 app.use("*",notfound)
