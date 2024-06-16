@@ -147,8 +147,4 @@ const getCategory = async (req, res, next) => {
 
 
 
-
-
-
-
 module.exports = { addCategory, updateCategory, deleteCategory, getCategories ,getCategory};
