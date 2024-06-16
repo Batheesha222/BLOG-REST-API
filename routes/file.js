@@ -7,7 +7,7 @@ const upload = require("../middleware/upload")
 router.post(
   "/upload",
   isAuth,
-  upload.single("image"),
+  upload.array("image", 3),
   fileController.uploadFile
 );
 
