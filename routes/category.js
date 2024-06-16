@@ -36,6 +36,9 @@ router.delete(
 router.get("/",isAuth,categoryController.getCategories)
 
 
+router.get("/:id",isAuth,idValidator,validate,categoryController.getCategory)
+
+
 
 
 module.exports = router;
