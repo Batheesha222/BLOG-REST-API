@@ -5,7 +5,6 @@ const { addCategoryValidator, idValidator } = require("../validators/category");
 const validate = require("../validators/validator");
 const isAuth = require("../middleware/isAuth");
 const isAdmin = require("../middleware/isAdmin");
-const { deleteCategory } = require("../controllers/category");
 
 router.post(
   "/",
@@ -33,4 +32,10 @@ router.delete(
   validate,
   categoryController.deleteCategory
 );
+
+router.get("/",isAuth,categoryController.getCategories)
+
+
+
+
 module.exports = router;
