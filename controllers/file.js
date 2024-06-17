@@ -1,8 +1,29 @@
-
+const path = require("path")
+const {validateExtension} = require("../validators/file")
+const {uploadFileToS3} = require("../utils/awsS3")
 
 const uploadFile = async(req,res,next)=>{
     try {
-        res.json({ok:true})
+        const {file} = req;
+        if(!file){
+            res.code = 400;
+            throw new Error("file is not selected")
+        }
+        const ext = path.extname(file.originalname)
+        const isValidExt = validateExtension(ext)
+
+        if(!isValidExt){
+            res.code = 400;
+            throw new Error("only .jpg .jpeg or .png allowed")
+        }
+
+        const key = await uploadFileToS3({file,ext})
+        res.status(201).json({
+            code: 201,
+            status: true,
+            message: "File uploaded successfully",
+            data: { key},
+          });
     } catch (error) {
         next(error)
     }
