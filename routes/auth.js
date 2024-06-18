@@ -53,6 +53,13 @@ router.put(
   authController.changePassword
 );
 
-router.put("/update-profile",isAuth,updateProfileValidator,authController.updateProfile)
+router.put(
+  "/update-profile",
+  isAuth,
+  updateProfileValidator,
+  authController.updateProfile
+);
+
+router.get("/current-user",isAuth,authController.currentUser)
 
 module.exports = router;
