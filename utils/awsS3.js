@@ -1,5 +1,6 @@
-const { PutObjectCommand, S3Client } = require("@aws-sdk/client-s3");
+const { PutObjectCommand, S3Client ,GetObjectCommand,DeleteObjectCommand} = require("@aws-sdk/client-s3");
 const generateCode = require("../utils/generateCode");
+const { getSignedUrl} = require("@aws-sdk/s3-request-presigner")
 
 const {
   awsRegion,
@@ -35,4 +36,34 @@ const uploadFileToS3 = async ({ file, ext }) => {
     console.log(error);
   }
 };
-module.exports = { uploadFileToS3 };
+
+const signedUrl = async(Key)=>{
+  const params = {
+    Bucket: awsBucketName,
+    Key,
+  }
+  const command = new GetObjectCommand(params)
+  try {
+    const url = await getSignedUrl(client,command,{expiresIn:60})
+    return url;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+const deleteFileFromS3 = async (Key) => {
+  const params = {
+    Bucket: awsBucketName,
+    Key,
+  };
+
+  const command = new DeleteObjectCommand(params);
+
+  try {
+    await client.send(command);
+    return;
+  } catch (error) {
+    console.log(error);
+  }
+};
+module.exports = { uploadFileToS3 ,signedUrl, deleteFileFromS3};
