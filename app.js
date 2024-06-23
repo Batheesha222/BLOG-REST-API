@@ -5,6 +5,7 @@ dotenv.config();
 const connectMongodb = require("./init/mongodb");
 const { authRoute, categoryRoute, fileRoute, postRoute } = require("./routes");
 const morgan = require("morgan");
+const cors = require("cors");
 const { errorHandler } = require("./middleware");
 const notfound = require("./controllers/notFound");
 
@@ -15,6 +16,7 @@ const app = express();
 connectMongodb();
 
 //third party middleware
+app.use(cors({ origin: "http://localhost:5173" }));
 app.use(express.json({ limit: "500mb" })); //limit 500mb to passing DATA
 app.use(bodyParser.urlencoded({ limit: "500mb", extended: true })); //extended:true because provide a warning
 app.use(morgan("dev"));
